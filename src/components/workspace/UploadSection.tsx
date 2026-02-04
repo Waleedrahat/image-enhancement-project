@@ -1,0 +1,184 @@
+import { useCallback, useState } from 'react';
+import { Upload, ImageIcon, X, FileType, Ruler } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { ImageFile } from '@/types';
+import { useToast } from '@/hooks/use-toast';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+export function UploadSection() {
+  const [isDragging, setIsDragging] = useState(false);
+  const { currentImage, setCurrentImage } = useWorkspace();
+  const { toast } = useToast();
+
+  const processFile = useCallback((file: File) => {
+    // Validate file type
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload a JPG, PNG, or WebP image.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: 'File too large',
+        description: 'Maximum file size is 10MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Create object URL and get image dimensions
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const imageFile: ImageFile = {
+        id: `img-${Date.now()}`,
+        name: file.name,
+        url,
+        size: file.size,
+        width: img.width,
+        height: img.height,
+        format: file.type,
+      };
+      setCurrentImage(imageFile);
+      toast({
+        title: 'Image uploaded',
+        description: `${file.name} is ready for processing.`,
+      });
+    };
+    img.src = url;
+  }, [setCurrentImage, toast]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      processFile(file);
+    }
+  }, [processFile]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  }, [processFile]);
+
+  const handleRemoveImage = useCallback(() => {
+    if (currentImage) {
+      URL.revokeObjectURL(currentImage.url);
+    }
+    setCurrentImage(null);
+  }, [currentImage, setCurrentImage]);
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center gap-2">
+          <Upload className="h-4 w-4" />
+          Upload Image
+        </CardTitle>
+        <CardDescription className="text-xs">
+          JPG, PNG, WebP up to 10MB
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {!currentImage ? (
+          <div
+            className={`
+              relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer
+              ${isDragging 
+                ? 'border-primary bg-primary/5' 
+                : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50'
+              }
+            `}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onClick={() => document.getElementById('file-upload')?.click()}
+          >
+            <input
+              id="file-upload"
+              type="file"
+              accept={ACCEPTED_TYPES.join(',')}
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <ImageIcon className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">
+                  Drop your image here
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  or click to browse
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {/* Thumbnail preview */}
+            <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+              <img
+                src={currentImage.url}
+                alt="Uploaded"
+                className="w-full h-full object-contain"
+              />
+              <Button
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 h-6 w-6"
+                onClick={handleRemoveImage}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+
+            {/* File metadata */}
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <FileType className="h-3 w-3" />
+                <span className="truncate flex-1">{currentImage.name}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Ruler className="h-3 w-3" />
+                <span>{currentImage.width} × {currentImage.height}px</span>
+                <span className="text-muted-foreground/50">•</span>
+                <span>{formatFileSize(currentImage.size)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

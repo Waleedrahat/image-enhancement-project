@@ -3,10 +3,9 @@ import { Github, Twitter, Linkedin } from 'lucide-react';
 import { LogoMark } from '@/components/brand/LogoMark';
 
 const teamMembers = [
-  { name: 'Team Member 1', role: 'Developer', placeholder: true },
-  { name: 'Team Member 2', role: 'Developer', placeholder: true },
-  { name: 'Team Member 3', role: 'Developer', placeholder: true },
-  { name: 'Team Member 4', role: 'Developer', placeholder: true },
+  { name: 'Muhammad Waleed', role: 'Creater' },
+  { name: 'Syed Muhammad Zain', role: 'Creater' },
+  { name: 'Hussain Minhas', role: 'Creater' },
 ];
 
 export function Footer() {
@@ -65,9 +64,9 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Team */}
+          {/* Creater */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Team</h4>
+            <h4 className="font-semibold">Creater</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               {teamMembers.map((member, index) => (
                 <li key={index}>
@@ -78,13 +77,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Supervisor section */}
         <div className="mt-8 pt-8 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-muted-foreground text-center md:text-left">
-              <p><strong>Supervisor:</strong> Zaeem Nazir</p>
-              <p><strong>Advisor:</strong> Farwa Khalid</p>
-            </div>
+          <div className="flex justify-center">
             <div className="flex items-center gap-4">
               <a 
                 href="#" 

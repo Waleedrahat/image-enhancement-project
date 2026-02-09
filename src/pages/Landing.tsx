@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { Hero, Features, HowItWorks } from '@/components/landing/LandingContent';
+import { Hero, Features, HowItWorks, BeforeAfter } from '@/components/landing/LandingContent';
 
 export default function Landing() {
   return (
@@ -8,6 +8,7 @@ export default function Landing() {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <BeforeAfter />
         <Features />
         <HowItWorks />
       </main>

@@ -14,9 +14,10 @@ interface ActionButtonProps {
   disabled?: boolean;
   recommended?: boolean;
   variant?: 'default' | 'primary' | 'accent';
+  compact?: boolean;
 }
 
-function ActionButton({ icon, title, description, onClick, disabled, recommended, variant = 'default' }: ActionButtonProps) {
+function ActionButton({ icon, title, description, onClick, disabled, recommended, variant = 'default', compact = false }: ActionButtonProps) {
   return (
     <Card
       className={cn(
@@ -25,32 +26,42 @@ function ActionButton({ icon, title, description, onClick, disabled, recommended
         variant === 'primary' && 'border-primary/50 bg-primary/5 hover:border-primary hover:bg-primary/10',
         variant === 'accent' && 'border-accent/50 bg-accent/5 hover:border-accent'
       )}
+      title={compact ? description : undefined}
       onClick={() => !disabled && onClick()}
     >
       {recommended && (
-        <Badge className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs">
+        <Badge className={`absolute -top-2 -right-2 bg-primary text-primary-foreground ${compact ? "text-[10px]" : "text-xs"}`}>
           Recommended
         </Badge>
       )}
-      <CardContent className="p-4 flex items-start gap-3">
+      <CardContent className={`${compact ? "p-2" : "p-4"} flex items-start ${compact ? "gap-2" : "gap-3"}`}>
         <div className={cn(
-          'p-2.5 rounded-lg shrink-0',
+          `${compact ? "p-1.5" : "p-2.5"} rounded-lg shrink-0`,
           variant === 'primary' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
         )}>
           {icon}
         </div>
         <div className="min-w-0">
-          <h3 className="font-semibold text-sm">{title}</h3>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{description}</p>
+          <h3 className={`${compact ? "text-[11px]" : "text-sm"} font-semibold`}>{title}</h3>
+          {compact ? (
+            <span className="sr-only">{description}</span>
+          ) : (
+            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{description}</p>
+          )}
         </div>
       </CardContent>
     </Card>
   );
 }
 
-export function ActionButtons() {
+interface ActionButtonsProps {
+  compact?: boolean;
+}
+
+export function ActionButtons({ compact = false }: ActionButtonsProps) {
   const { currentImage, settings, updateEnhancement, updateBackground, updateSecurity } = useWorkspace();
   const { startJob, isProcessing } = useJob();
+  const showAdvanced = !compact;
 
   const hasImage = !!currentImage;
   const disabled = !hasImage || isProcessing;
@@ -127,61 +138,71 @@ export function ActionButtons() {
 
   return (
     <Card className="border-dashed">
-      <CardContent className="p-4">
-        <h2 className="text-sm font-semibold mb-3 text-muted-foreground">
-          {hasImage ? 'What do you want to do with this image?' : 'Upload an image to get started'}
-        </h2>
-        
-        <div className="grid grid-cols-1 gap-2.5">
+      <CardContent className={compact ? "p-2" : "p-4"}>
+        {!compact && (
+          <h2 className="text-sm font-semibold mb-3 text-muted-foreground">
+            {hasImage ? 'What do you want to do with this image?' : 'Upload an image to get started'}
+          </h2>
+        )}
+
+        <div className={`${compact ? "gap-2" : "gap-2.5"} grid ${compact ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
           <ActionButton
-            icon={<Sparkles className="h-5 w-5" />}
+            icon={<Sparkles className={compact ? "h-4 w-4" : "h-5 w-5"} />}
             title="Auto Enhance"
             description="AI-powered enhancement with optimal settings"
             onClick={handleAutoEnhance}
             disabled={disabled}
             recommended
             variant="primary"
+            compact={compact}
           />
+          {showAdvanced && (
+            <ActionButton
+              icon={<Wand2 className={compact ? "h-4 w-4" : "h-5 w-5"} />}
+              title="Custom Enhance"
+              description="Choose upscaling, denoising, deblurring options"
+              onClick={handleCustomEnhance}
+              disabled={disabled}
+              compact={compact}
+            />
+          )}
           
           <ActionButton
-            icon={<Wand2 className="h-5 w-5" />}
-            title="Custom Enhance"
-            description="Choose upscaling, denoising, deblurring options"
-            onClick={handleCustomEnhance}
-            disabled={disabled}
-          />
-          
-          <ActionButton
-            icon={<Eraser className="h-5 w-5" />}
+            icon={<Eraser className={compact ? "h-4 w-4" : "h-5 w-5"} />}
             title="Remove Background"
             description="Extract subject with transparent background"
             onClick={handleRemoveBackground}
             disabled={disabled}
+            compact={compact}
           />
           
           <ActionButton
-            icon={<Image className="h-5 w-5" />}
+            icon={<Image className={compact ? "h-4 w-4" : "h-5 w-5"} />}
             title="Replace Background"
             description="Swap background with blur, color, or image"
             onClick={handleReplaceBackground}
             disabled={disabled}
+            compact={compact}
           />
+          {showAdvanced && (
+            <ActionButton
+              icon={<Zap className={compact ? "h-4 w-4" : "h-5 w-5"} />}
+              title="Run Full AI Pipeline"
+              description="Enhance + remove background in one go"
+              onClick={handleFullPipeline}
+              disabled={disabled}
+              variant="accent"
+              compact={compact}
+            />
+          )}
           
           <ActionButton
-            icon={<Zap className="h-5 w-5" />}
-            title="Run Full AI Pipeline"
-            description="Enhance + remove background in one go"
-            onClick={handleFullPipeline}
-            disabled={disabled}
-            variant="accent"
-          />
-          
-          <ActionButton
-            icon={<Lock className="h-5 w-5" />}
+            icon={<Lock className={compact ? "h-4 w-4" : "h-5 w-5"} />}
             title="Encrypt Image"
             description="Secure with AES-256 encryption"
             onClick={handleEncrypt}
             disabled={disabled}
+            compact={compact}
           />
         </div>
       </CardContent>

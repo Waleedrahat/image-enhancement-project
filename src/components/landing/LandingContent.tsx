@@ -59,6 +59,21 @@ const steps = [
   },
 ];
 
+const comparisons = [
+  {
+    title: 'Portrait Cleanup',
+    description: 'Sharper detail, natural skin tones, and balanced lighting.',
+    before: '/before-portrait.svg',
+    after: '/after-portrait.svg',
+  },
+  {
+    title: 'Product Enhancement',
+    description: 'Crisp edges and cleaner backgrounds for catalogs.',
+    before: '/before-product.svg',
+    after: '/after-product.svg',
+  },
+];
+
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
@@ -169,6 +184,46 @@ export function Features() {
               <p className="text-muted-foreground">
                 {feature.description}
               </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function BeforeAfter() {
+  return (
+    <section className="container px-4 py-20">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold mb-4">See the Difference</h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Before-and-after results build trust fast. Here are a couple of typical transformations.
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {comparisons.map((item) => (
+          <Card key={item.title} className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="text-lg">{item.title}</CardTitle>
+              <CardDescription>{item.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative rounded-lg overflow-hidden border bg-muted/40">
+                  <img src={item.before} alt={`${item.title} before`} className="w-full h-full object-cover" />
+                  <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-background/80 px-2 py-1 rounded-full border">
+                    Before
+                  </span>
+                </div>
+                <div className="relative rounded-lg overflow-hidden border bg-muted/40">
+                  <img src={item.after} alt={`${item.title} after`} className="w-full h-full object-cover" />
+                  <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-background/80 px-2 py-1 rounded-full border">
+                    After
+                  </span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -11,9 +11,8 @@ import {
 } from "@/components/ui/dialog";
 
 import { useState } from 'react';
-import { Menu, ChevronLeft, ChevronRight, Wand2, Layers, Shield, Settings2, Download } from 'lucide-react';
+import { Menu, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Wand2, Layers, Shield, Settings2, Download } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
-import { UploadSection } from '@/components/workspace/UploadSection';
 import { ActionButtons } from '@/components/workspace/ActionButtons';
 import { PipelineSection } from '@/components/workspace/PipelineSection';
 import { EnhancementControls } from '@/components/workspace/EnhancementControls';
@@ -23,7 +22,6 @@ import { ExportSection } from '@/components/workspace/ExportSection';
 import { ImagePreview } from '@/components/workspace/ImagePreview';
 import { JobProgress, ResultMetrics } from '@/components/workspace/JobProgress';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useJob } from '@/contexts/JobContext';
@@ -31,19 +29,15 @@ import { useJob } from '@/contexts/JobContext';
 export default function Workspace() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [actionsCollapsed, setActionsCollapsed] = useState(false);
   const { settings, currentImage } = useWorkspace();
   const { currentJob } = useJob();
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <div className="p-4 pb-2 space-y-4">
-        <UploadSection />
-        <ActionButtons />
-      </div>
-
       <div className="flex-1 min-h-0">
         <Tabs defaultValue="pipeline" className="h-full flex flex-col">
-          <div className="px-4 pb-2">
+          <div className="px-4 pt-4 pb-2">
             <TabsList className="grid w-full grid-cols-4 h-auto py-1">
               <TabsTrigger value="pipeline" title="Pipeline" className="px-1 py-1.5"><Settings2 className="h-4 w-4" /></TabsTrigger>
               <TabsTrigger value="enhancement" disabled={!settings.enhancement.enabled} title="Enhancement" className="px-1 py-1.5"><Wand2 className="h-4 w-4" /></TabsTrigger>
@@ -52,7 +46,7 @@ export default function Workspace() {
             </TabsList>
           </div>
 
-          <ScrollArea className="flex-1 px-4">
+          <div className="flex-1 px-4 overflow-y-auto">
             <TabsContent value="pipeline" className="mt-0 pb-4">
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">Processing Pipeline</h3>
@@ -80,15 +74,35 @@ export default function Workspace() {
                 <SecurityControls />
               </div>
             </TabsContent>
-          </ScrollArea>
+          </div>
         </Tabs>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Navbar />
+
+      <div className="border-b bg-card/50">
+        <div className="px-4 py-2 flex items-center justify-between">
+          <span className="text-xs font-semibold text-muted-foreground">Quick Actions</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => setActionsCollapsed(!actionsCollapsed)}
+            aria-label={actionsCollapsed ? "Show quick actions" : "Hide quick actions"}
+          >
+            {actionsCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+          </Button>
+        </div>
+        {!actionsCollapsed && (
+          <div className="px-4 pb-2">
+            <ActionButtons compact />
+          </div>
+        )}
+      </div>
 
       <div className="flex-1 flex overflow-hidden">
         {/* Mobile sidebar trigger */}
@@ -96,30 +110,29 @@ export default function Workspace() {
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              size="icon"
-              className="fixed bottom-4 left-4 z-50 lg:hidden h-12 w-12 rounded-full shadow-elevated"
+              size="sm"
+              className="fixed top-20 right-4 z-50 lg:hidden gap-2 rounded-full shadow-elevated px-3"
             >
               <Menu className="h-5 w-5" />
+              <span className="text-xs font-medium">Controls</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80 p-0">
-            <ScrollArea className="h-full">
-              <SidebarContent />
-            </ScrollArea>
+          <SheetContent side="left" className="w-80 p-0 overflow-hidden">
+            <SidebarContent />
           </SheetContent>
         </Sheet>
 
         {/* Desktop sidebar */}
         <aside
           className={`
-            hidden lg:flex flex-col border-r bg-card transition-all duration-300
+            hidden lg:flex flex-col border-r bg-card transition-all duration-300 overflow-hidden
             ${sidebarCollapsed ? 'w-0' : 'w-80'}
           `}
         >
           {!sidebarCollapsed && (
-            <ScrollArea className="flex-1">
+            <div className="flex-1 overflow-hidden">
               <SidebarContent />
-            </ScrollArea>
+            </div>
           )}
 
           {/* Collapse toggle */}
@@ -142,40 +155,41 @@ export default function Workspace() {
         </aside>
 
         {/* Main content area */}
-        <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-          {/* Image preview */}
-          <div className="flex-1 min-h-0">
-            <ImagePreview />
-          </div>
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden gap-2 lg:gap-0">
+            {/* Image preview */}
+            <div className="flex-1 min-h-[50vh] lg:min-h-0 overflow-auto order-1">
+              <ImagePreview />
+            </div>
 
-          {/* Right panel - Job progress and metrics */}
-          {/* Right panel - Job progress, metrics, and Export */}
-          {(currentJob || currentImage || settings.enhancement.enabled || settings.background.enabled || settings.security.enabled) && (
-            <aside className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l bg-card flex flex-col overflow-hidden">
-              {/* Right Sidebar Header with Export Button */}
-              <div className="p-4 border-b flex items-center justify-between bg-card z-10">
-                <h3 className="font-semibold text-sm">Status</h3>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="sm" variant="default" className="gap-2">
-                      <Download className="h-4 w-4" />
-                      Export
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <ExportSection />
-                  </DialogContent>
-                </Dialog>
-              </div>
-
-              <ScrollArea className="flex-1">
-                <div className="p-4 space-y-4">
-                  <JobProgress />
-                  <ResultMetrics />
+            {/* Right panel - Job progress, metrics, and Export */}
+            {(currentJob || currentImage || settings.enhancement.enabled || settings.background.enabled || settings.security.enabled) && (
+              <aside className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l bg-card flex flex-col overflow-hidden order-2 max-h-[40vh] lg:max-h-none">
+                {/* Right Sidebar Header with Export Button */}
+                <div className="p-4 border-b flex items-center justify-between bg-card z-10">
+                  <h3 className="font-semibold text-sm">Status</h3>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button size="sm" variant="default" className="gap-2">
+                        <Download className="h-4 w-4" />
+                        Export
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <ExportSection />
+                    </DialogContent>
+                  </Dialog>
                 </div>
-              </ScrollArea>
-            </aside>
-          )}
+
+                <div className="flex-1 overflow-auto">
+                  <div className="p-4 space-y-4">
+                    <JobProgress />
+                    <ResultMetrics />
+                  </div>
+                </div>
+              </aside>
+            )}
+          </div>
         </main>
       </div>
     </div>

@@ -9,7 +9,11 @@ import { useToast } from '@/hooks/use-toast';
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-export function UploadSection() {
+interface UploadSectionProps {
+  compact?: boolean;
+}
+
+export function UploadSection({ compact = false }: UploadSectionProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { currentImage, setCurrentImage } = useWorkspace();
   const { toast } = useToast();
@@ -98,21 +102,22 @@ export function UploadSection() {
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Upload className="h-4 w-4" />
+    <Card className={compact ? "shadow-sm" : ""}>
+      <CardHeader className={compact ? "pb-2 p-4" : "pb-3"}>
+        <CardTitle className={`${compact ? "text-sm" : "text-base"} flex items-center gap-2`}>
+          <Upload className={compact ? "h-3.5 w-3.5" : "h-4 w-4"} />
           Upload Image
         </CardTitle>
-        <CardDescription className="text-xs">
+        <CardDescription className={compact ? "text-[11px]" : "text-xs"}>
           JPG, PNG, WebP up to 10MB
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className={compact ? "p-4 pt-0" : ""}>
         {!currentImage ? (
           <div
             className={`
-              relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer
+              relative border-2 border-dashed rounded-lg text-center transition-colors cursor-pointer
+              ${compact ? "p-4" : "p-6"}
               ${isDragging 
                 ? 'border-primary bg-primary/5' 
                 : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50'
@@ -130,19 +135,36 @@ export function UploadSection() {
               onChange={handleFileSelect}
               className="hidden"
             />
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <ImageIcon className="h-6 w-6 text-primary" />
+            <div className={`flex flex-col items-center ${compact ? "gap-1.5" : "gap-2"}`}>
+              <div className={`${compact ? "w-10 h-10" : "w-12 h-12"} rounded-full bg-primary/10 flex items-center justify-center`}>
+                <ImageIcon className={compact ? "h-5 w-5 text-primary" : "h-6 w-6 text-primary"} />
               </div>
               <div>
-                <p className="text-sm font-medium">
+                <p className={compact ? "text-xs font-medium" : "text-sm font-medium"}>
                   Drop your image here
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className={compact ? "text-[11px] text-muted-foreground" : "text-xs text-muted-foreground"}>
                   or click to browse
                 </p>
               </div>
             </div>
+          </div>
+        ) : compact ? (
+          <div className="flex items-center justify-between gap-2 rounded-md border border-dashed bg-muted/30 px-2.5 py-2">
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium truncate">{currentImage.name}</p>
+              <p className="text-[10px] text-muted-foreground">
+                {currentImage.width} x {currentImage.height}px - {formatFileSize(currentImage.size)}
+              </p>
+            </div>
+            <Button
+              variant="destructive"
+              size="icon"
+              className="h-6 w-6 shrink-0"
+              onClick={handleRemoveImage}
+            >
+              <X className="h-3 w-3" />
+            </Button>
           </div>
         ) : (
           <div className="space-y-3">
@@ -171,8 +193,8 @@ export function UploadSection() {
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Ruler className="h-3 w-3" />
-                <span>{currentImage.width} × {currentImage.height}px</span>
-                <span className="text-muted-foreground/50">•</span>
+                <span>{currentImage.width} x {currentImage.height}px</span>
+                <span className="text-muted-foreground/50">-</span>
                 <span>{formatFileSize(currentImage.size)}</span>
               </div>
             </div>

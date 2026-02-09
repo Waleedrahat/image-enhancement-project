@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ZoomIn, ZoomOut, Maximize2, RotateCcw, SplitSquareVertical, ImageIcon, Grid, Eye, EyeOff, Save, Download, Share2 } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize2, SplitSquareVertical, Grid, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -8,6 +8,7 @@ import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useJob } from '@/contexts/JobContext';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { UploadSection } from '@/components/workspace/UploadSection';
 
 export function ImagePreview() {
   const {
@@ -38,9 +39,9 @@ export function ImagePreview() {
   const handleFit = () => setZoomLevel(100);
 
   return (
-    <div className="flex flex-col h-full bg-background/50 relative">
+    <div className="flex flex-col min-h-full bg-background/50 relative">
       {/* Floating Toolbar */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 p-1.5 rounded-full bg-background/80 backdrop-blur-md border shadow-lg">
+      <div className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 p-1.5 rounded-full bg-background/80 backdrop-blur-md border shadow-lg">
         <TooltipProvider delayDuration={300}>
           {/* Zoom Controls */}
           <div className="flex items-center gap-0.5 px-1">
@@ -119,7 +120,19 @@ export function ImagePreview() {
       </div>
 
       {/* Image Display Area */}
-      <div className="flex-1 relative overflow-hidden bg-[radial-gradient(circle_at_center,hsl(var(--muted)),hsl(var(--background)))]">
+      <div className="flex-1 relative overflow-auto bg-[radial-gradient(circle_at_center,hsl(var(--muted)),hsl(var(--background)))]">
+        {!currentImage ? (
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+            <div className="w-full max-w-sm">
+              <UploadSection compact />
+            </div>
+          </div>
+        ) : (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 w-[90%] max-w-sm sm:bottom-4 sm:right-4 sm:left-auto sm:translate-x-0 sm:w-64">
+            <UploadSection compact />
+          </div>
+        )}
+
         {/* Checkerboard pattern for transparency */}
         <div
           className="absolute inset-0 opacity-5"
@@ -178,15 +191,7 @@ export function ImagePreview() {
               </div>
             )}
           </div>
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
-            <div className="w-20 h-20 rounded-2xl bg-muted/50 flex items-center justify-center mb-4 ring-1 ring-border/50">
-              <ImageIcon className="h-10 w-10 opacity-50" />
-            </div>
-            <p className="text-lg font-medium">No image loaded</p>
-            <p className="text-sm opacity-75">Upload an image to start editing</p>
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

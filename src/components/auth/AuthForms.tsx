@@ -230,7 +230,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
     try {
       const success = await signup(name, email, password);
       if (success) {
-        toast({ title: 'Account created!', description: 'Welcome to ImageAI.' });
+        toast({ title: 'Account created!', description: 'Welcome to AI IMAGE ENHANCER.' });
         onSuccess?.();
         navigate('/app');
       } else {

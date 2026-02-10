@@ -1,4 +1,4 @@
-import { Sparkles, Wand2, Eraser, Image, Zap, Lock } from 'lucide-react';
+import { Sparkles, Wand2, Eraser, Image, Zap, Lock, Scan } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
@@ -24,7 +24,8 @@ function ActionButton({ icon, title, description, onClick, disabled, recommended
         'relative cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg',
         disabled && 'opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none',
         variant === 'primary' && 'border-primary/50 bg-primary/5 hover:border-primary hover:bg-primary/10',
-        variant === 'accent' && 'border-accent/50 bg-accent/5 hover:border-accent'
+        variant === 'accent' && 'border-accent/50 bg-accent/5 hover:border-accent',
+        compact && 'min-w-[120px] shrink-0'
       )}
       title={compact ? description : undefined}
       onClick={() => !disabled && onClick()}
@@ -96,6 +97,17 @@ export function ActionButtons({ compact = false }: ActionButtonsProps) {
     // Just enable the controls, don't start - user will configure manually
   };
 
+  const handleRemoveBlur = () => {
+    updateEnhancement({ enabled: true, mode: 'deblur', quality: 'balanced', deblurStrength: 60 });
+    updateBackground({ enabled: false });
+    updateSecurity({ enabled: false });
+    runWithSettings({
+      enhancement: { enabled: true, mode: 'deblur', quality: 'balanced', deblurStrength: 60 },
+      background: { enabled: false, action: 'remove', type: 'transparent', edgeSmoothing: 50, refineEdges: true },
+      security: { enabled: false },
+    });
+  };
+
   const handleRemoveBackground = () => {
     updateEnhancement({ enabled: false });
     updateBackground({ enabled: true, action: 'remove', type: 'transparent' });
@@ -145,7 +157,53 @@ export function ActionButtons({ compact = false }: ActionButtonsProps) {
           </h2>
         )}
 
-        <div className={`${compact ? "gap-2" : "gap-2.5"} grid ${compact ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
+        {compact ? (
+          <div className="flex gap-2 overflow-x-auto pb-1 pr-1 scrollbar-thin">
+            <ActionButton
+              icon={<Sparkles className="h-4 w-4" />}
+              title="Auto Enhance"
+              description="AI-powered enhancement with optimal settings"
+              onClick={handleAutoEnhance}
+              disabled={disabled}
+              recommended
+              variant="primary"
+              compact
+            />
+            <ActionButton
+              icon={<Scan className="h-4 w-4" />}
+              title="Remove Blur"
+              description="Fix motion blur and restore edges"
+              onClick={handleRemoveBlur}
+              disabled={disabled}
+              compact
+            />
+            <ActionButton
+              icon={<Eraser className="h-4 w-4" />}
+              title="Remove Background"
+              description="Extract subject with transparent background"
+              onClick={handleRemoveBackground}
+              disabled={disabled}
+              compact
+            />
+            <ActionButton
+              icon={<Image className="h-4 w-4" />}
+              title="Replace Background"
+              description="Swap background with blur, color, or image"
+              onClick={handleReplaceBackground}
+              disabled={disabled}
+              compact
+            />
+            <ActionButton
+              icon={<Lock className="h-4 w-4" />}
+              title="Encrypt Image"
+              description="Secure with AES-256 encryption"
+              onClick={handleEncrypt}
+              disabled={disabled}
+              compact
+            />
+          </div>
+        ) : (
+          <div className={`${compact ? "gap-2" : "gap-2.5"} grid ${compact ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
           <ActionButton
             icon={<Sparkles className={compact ? "h-4 w-4" : "h-5 w-5"} />}
             title="Auto Enhance"
@@ -166,6 +224,15 @@ export function ActionButtons({ compact = false }: ActionButtonsProps) {
               compact={compact}
             />
           )}
+
+          <ActionButton
+            icon={<Scan className={compact ? "h-4 w-4" : "h-5 w-5"} />}
+            title="Remove Blur"
+            description="Fix motion blur and restore edges"
+            onClick={handleRemoveBlur}
+            disabled={disabled}
+            compact={compact}
+          />
           
           <ActionButton
             icon={<Eraser className={compact ? "h-4 w-4" : "h-5 w-5"} />}
@@ -205,6 +272,7 @@ export function ActionButtons({ compact = false }: ActionButtonsProps) {
             compact={compact}
           />
         </div>
+        )}
       </CardContent>
     </Card>
   );

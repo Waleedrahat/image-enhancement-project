@@ -41,7 +41,7 @@ export function Navbar() {
             <LogoMark className="h-5 w-5 text-white" />
           </div>
           <span className="font-semibold text-lg hidden sm:inline-block">
-            ImageAI
+            AI IMAGE ENHANCER
           </span>
         </Link>
 

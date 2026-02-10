@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import howItWorksVideo from '@/assets/media/example.mp4';
 
 const features = [
   {
@@ -61,16 +62,14 @@ const steps = [
 
 const comparisons = [
   {
-    title: 'Portrait Cleanup',
-    description: 'Sharper detail, natural skin tones, and balanced lighting.',
-    before: '/before-portrait.svg',
-    after: '/after-portrait.svg',
+    title: 'Portrait Enhancement',
+    description: 'Cleaner tones, sharper detail, and balanced lighting.',
+    image: '/image_before_after.webp',
   },
   {
-    title: 'Product Enhancement',
+    title: 'Product Cleanup',
     description: 'Crisp edges and cleaner backgrounds for catalogs.',
-    before: '/before-product.svg',
-    after: '/after-product.svg',
+    image: '/image_before_after2.webp',
   },
 ];
 
@@ -128,7 +127,7 @@ export function Hero() {
                   <div className="h-3 w-3 rounded-full bg-yellow-500" />
                   <div className="h-3 w-3 rounded-full bg-green-500" />
                 </div>
-                <span className="text-xs text-muted-foreground ml-2">ImageAI Workspace</span>
+                <span className="text-xs text-muted-foreground ml-2">AI IMAGE ENHANCER Workspace</span>
               </div>
               <div className="aspect-video bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
                 <div className="flex items-center gap-8">
@@ -211,14 +210,22 @@ export function BeforeAfter() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="relative rounded-lg overflow-hidden border bg-muted/40">
-                  <img src={item.before} alt={`${item.title} before`} className="w-full h-full object-cover" />
+                <div className="relative rounded-lg overflow-hidden border bg-muted/40 aspect-[4/3]">
+                  <img
+                    src={item.image}
+                    alt={`${item.title} before`}
+                    className="h-full w-[200%] max-w-none object-cover translate-x-0"
+                  />
                   <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-background/80 px-2 py-1 rounded-full border">
                     Before
                   </span>
                 </div>
-                <div className="relative rounded-lg overflow-hidden border bg-muted/40">
-                  <img src={item.after} alt={`${item.title} after`} className="w-full h-full object-cover" />
+                <div className="relative rounded-lg overflow-hidden border bg-muted/40 aspect-[4/3]">
+                  <img
+                    src={item.image}
+                    alt={`${item.title} after`}
+                    className="h-full w-[200%] max-w-none object-cover -translate-x-1/2"
+                  />
                   <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-background/80 px-2 py-1 rounded-full border">
                     After
                   </span>
@@ -228,6 +235,7 @@ export function BeforeAfter() {
           </Card>
         ))}
       </div>
+
     </section>
   );
 }
@@ -238,32 +246,59 @@ export function HowItWorks() {
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-4">How It Works</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Get started in three simple steps. No technical knowledge required.
+          A quick walkthrough of the flow. Upload, configure, and download in minutes.
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-3 max-w-4xl mx-auto">
-        {steps.map((step, index) => (
-          <div key={index} className="text-center relative">
-            {/* Connector line */}
-            {index < steps.length - 1 && (
-              <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-px bg-gradient-to-r from-border to-transparent" />
-            )}
-            
-            {/* Step number */}
-            <div className="relative inline-flex">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center mb-6">
-                <step.icon className="h-10 w-10 text-primary" />
+      <div className="grid gap-8 lg:grid-cols-2 items-start">
+        <div className="relative rounded-2xl border bg-card shadow-elevated overflow-hidden">
+          <div className="absolute -inset-8 bg-gradient-to-r from-primary/15 via-purple-500/10 to-primary/15 blur-3xl" />
+          <div className="relative">
+            <div className="flex items-center gap-2 border-b px-4 py-3 bg-muted/50">
+              <div className="flex gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-red-500" />
+                <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                <div className="h-3 w-3 rounded-full bg-green-500" />
               </div>
-              <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full gradient-primary text-white text-sm font-bold flex items-center justify-center">
-                {index + 1}
-              </span>
+              <span className="text-xs text-muted-foreground ml-2">Workspace Walkthrough</span>
             </div>
-            
-            <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-            <p className="text-muted-foreground">{step.description}</p>
+            <div className="aspect-video bg-gradient-to-br from-muted to-muted/50">
+              <video
+                className="h-full w-full object-cover"
+                src={howItWorksVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+              />
+            </div>
           </div>
-        ))}
+        </div>
+
+        <div className="grid gap-4">
+          {steps.map((step, index) => (
+            <Card key={index} className="border bg-card">
+              <CardHeader className="flex-row items-center justify-between space-y-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center">
+                    <step.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base">{step.title}</CardTitle>
+                    <CardDescription className="text-xs uppercase tracking-wider text-primary font-medium">
+                      Step {index + 1}
+                    </CardDescription>
+                  </div>
+                </div>
+                <span className="text-xs text-muted-foreground">0{index + 1}</span>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{step.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* CTA */}

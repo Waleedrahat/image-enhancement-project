@@ -22,7 +22,7 @@ export function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary shadow-sm">
                 <LogoMark className="h-5 w-5 text-white" />
               </div>
-              <span className="font-semibold text-lg">ImageAI</span>
+              <span className="font-semibold text-lg">AI IMAGE ENHANCER</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               AI-powered image enhancement and security platform. 
@@ -108,7 +108,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
           <p>
-            © {currentYear} ImageAI - Final Year Project. All rights reserved.
+            © {currentYear} AI IMAGE ENHANCER - Final Year Project. All rights reserved.
           </p>
           <p className="mt-1">
             Built with React, TypeScript, and AI-powered processing.

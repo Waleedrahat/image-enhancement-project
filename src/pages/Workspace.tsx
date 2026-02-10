@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useState } from 'react';
-import { Menu, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Wand2, Layers, Shield, Settings2, Download } from 'lucide-react';
+import { Menu, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Wand2, Layers, Shield, Settings2, Download, ArrowLeft } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { ActionButtons } from '@/components/workspace/ActionButtons';
 import { PipelineSection } from '@/components/workspace/PipelineSection';
@@ -25,13 +25,23 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useJob } from '@/contexts/JobContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Workspace() {
+  const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [actionsCollapsed, setActionsCollapsed] = useState(false);
   const { settings, currentImage } = useWorkspace();
   const { currentJob } = useJob();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -86,7 +96,13 @@ export default function Workspace() {
 
       <div className="border-b bg-card/50">
         <div className="px-4 py-2 flex items-center justify-between">
-          <span className="text-xs font-semibold text-muted-foreground">Quick Actions</span>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="gap-2" onClick={handleBack}>
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <span className="text-xs font-semibold text-muted-foreground">Quick Actions</span>
+          </div>
           <Button
             variant="ghost"
             size="icon"

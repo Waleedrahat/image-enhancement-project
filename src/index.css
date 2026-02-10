@@ -11,28 +11,28 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 0 0% 9%;
+    --background: 30 33% 98%;
+    --foreground: 224 18% 12%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 18% 12%;
 
-    --popover: 0 0% 89%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 18% 12%;
 
-    /* Primary: Indigo */
-    --primary: 20 90% 48%;
-    --primary-foreground: 33 100% 96%;
+    /* Primary: Warm amber */
+    --primary: 24 92% 52%;
+    --primary-foreground: 36 100% 96%;
 
     /* Secondary: Soft slate */
-    --secondary: 0 0% 32%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 220 14% 92%;
+    --secondary-foreground: 224 18% 20%;
 
-    --muted: 0 0% 63%;
-    --muted-foreground: 0 0% 9%;
+    --muted: 220 16% 94%;
+    --muted-foreground: 224 10% 42%;
 
-    --accent: 47 100% 96%;
-    --accent-foreground: 37 92% 50%;
+    --accent: 45 100% 96%;
+    --accent-foreground: 30 90% 40%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 85% 97%;
@@ -46,25 +46,25 @@
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    --border: 0 0% 83%;
-    --input: 0 0% 83%;
-    --ring: 20 90% 48%;
+    --border: 220 14% 88%;
+    --input: 220 14% 88%;
+    --ring: 24 92% 52%;
 
     --radius: 0.75rem;
 
     /* Sidebar tokens */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 20 90% 48%;
-    --sidebar-primary-foreground: 33 100% 96%;
-    --sidebar-accent: 0 0% 32%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 83%;
-    --sidebar-ring: 20 90% 48%;
+    --sidebar-background: 30 33% 98%;
+    --sidebar-foreground: 224 18% 12%;
+    --sidebar-primary: 24 92% 52%;
+    --sidebar-primary-foreground: 36 100% 96%;
+    --sidebar-accent: 220 14% 92%;
+    --sidebar-accent-foreground: 224 18% 20%;
+    --sidebar-border: 220 14% 88%;
+    --sidebar-ring: 24 92% 52%;
 
     /* Custom gradients and effects */
-    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(259 84% 67%));
-    --gradient-hero: linear-gradient(135deg, hsl(239 84% 67% / 0.1), hsl(259 84% 67% / 0.1));
+    --gradient-primary: linear-gradient(135deg, hsl(24 92% 52%), hsl(40 92% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(24 92% 52% / 0.08), hsl(40 92% 60% / 0.08));
     --shadow-soft: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
     --shadow-elevated: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
     --shadow-glow: 0 0 20px hsl(239 84% 67% / 0.3);
@@ -163,8 +163,27 @@
     font-size: 80%;
   }
 
+  button,
+  [role="button"] {
+    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  }
+
+  button:hover,
+  [role="button"]:hover {
+    transform: translateY(-1px);
+  }
+
+  button:active,
+  [role="button"]:active {
+    transform: translateY(0);
+  }
+
   * {
     @apply border-border;
+  }
+
+  a {
+    transition: color 150ms ease, opacity 150ms ease;
   }
 
   body {
